@@ -26,7 +26,6 @@ int main(int argc, char** argv){
         return 0;
     }
 
-    // in the works
     Mat frame;
     while (cap.read(frame)){
         flip(frame, frame, -1);
