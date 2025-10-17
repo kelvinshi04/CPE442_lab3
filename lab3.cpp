@@ -52,22 +52,24 @@ Mat to442_grayscale(Mat frame){
     return gray;
 }
 
+
 // Apply the sobel filter on a grayscale image
 Mat to442_sobel(Mat input){
     Mat sobel(input.rows, input.cols, CV_8UC1, Scalar(0));
     int16_t xtotal, ytotal, total;
     for (int r = 1; r < input.rows-1; r++){
+        uchar* topRow = input.ptr<uchar>(r-1);
+        uchar* midRow = input.ptr<uchar>(r);
+        uchar* botRow = input.ptr<uchar>(r+1);
+        uchar* sRow = sobel.ptr<uchar>(r);
         for (int c = 1; c < input.cols-1; c++){
-            // Horizontal Operations
-            xtotal = input.at<uchar>(r-1, c-1)*-1 + input.at<uchar>(r-1, c+1) + input.at<uchar>(r, c-1)*-2 + input.at<uchar>(r, c+1)*2 + input.at<uchar>(r+1, c-1)*-1 + input.at<uchar>(r+1, c+1);
-            // Vertical Operations
-            ytotal = input.at<uchar>(r-1, c-1) + input.at<uchar>(r-1, c+1) + input.at<uchar>(r-1, c)*2 + input.at<uchar>(r+1, c-1)*-1 + input.at<uchar>(r+1, c)*-2 + input.at<uchar>(r+1, c+1)*-1;
+            // Apply sobel filter
+            xtotal = -topRow[c-1] + topRow[c+1] - midRow[c-1]*2 + midRow[c+1]*2 - botRow[c-1] + botRow[c+1];
+            ytotal = topRow[c-1] + topRow[c]*2 +topRow[c+1] - botRow[c-1] - botRow[c]*2 - botRow[c+1];
             total = abs(xtotal) + abs(ytotal);
             total = (total > 255) ? 255 : ((total < 0) ? 0 : total);
-            sobel.at<uchar>(r, c) = total;
+            sRow[c] = total;
         }
     }
     return sobel;
 } 
-
-
