@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall -Wextra -std=c++17 -I /usr/include/openv4
+CFLAGS = -Wall -Wextra -std=c++17 -I /usr/include/openv4 -O0
 LDFLAGS = -lopencv_imgcodecs -lopencv_core -lopencv_highgui -lopencv_videoio
 TARGET = lab3
 SRC = lab3.cpp

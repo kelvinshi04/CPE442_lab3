@@ -31,15 +31,15 @@ int main(int argc, char** argv){
     while (cap.read(frame)){
         flip(frame, frame, -1);
         Mat gray = to442_grayscale(frame);
-        imshow("gImage", gray);
-        waitKey(30);
-        //Mat sobelFrame = to442_sobel(frame);
-        //imshow("win1", sobelFrame);
+        Mat sobel = to442_sobel(gray);
+        imshow("gImage", sobel);
+        waitKey(1);
     }
 
     return 0;
 }
 
+// Given a colored image, return a grayscale version using ITU-R (BT.709) algorithm
 Mat to442_grayscale(Mat frame){
     Mat gray(frame.rows, frame.cols, CV_8UC1, Scalar(0));
     for (int r = 0; r < frame.rows; r++){
@@ -52,5 +52,23 @@ Mat to442_grayscale(Mat frame){
     }
     return gray;
 }
+
+// Apply the sobel filter on a grayscale image
+Mat to442_sobel(Mat input){
+    Mat sobel(input.rows, input.cols, CV_8UC1, Scalar(0));
+    int16_t xtotal, ytotal, total;
+    for (int r = 1; r < input.rows-1; r++){
+        for (int c = 1; c < input.cols-1; c++){
+            // Horizontal Operations
+            xtotal = input.at<uchar>(r-1, c-1)*-1 + input.at<uchar>(r-1, c+1) + input.at<uchar>(r, c-1)*-2 + input.at<uchar>(r, c+1)*2 + input.at<uchar>(r+1, c-1)*-1 + input.at<uchar>(r+1, c+1);
+            // Vertical Operations
+            ytotal = input.at<uchar>(r-1, c-1) + input.at<uchar>(r-1, c+1) + input.at<uchar>(r-1, c)*2 + input.at<uchar>(r+1, c-1)*-1 + input.at<uchar>(r+1, c)*-2 + input.at<uchar>(r+1, c+1)*-1;
+            total = abs(xtotal) + abs(ytotal);
+            total = (total > 255) ? 255 : ((total < 0) ? 0 : total);
+            sobel.at<uchar>(r, c) = total;
+        }
+    }
+    return sobel;
+} 
 
 
