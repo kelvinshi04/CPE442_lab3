@@ -21,7 +21,7 @@ int main(int argc, char** argv){
     string videoPath = argv[1];
     VideoCapture cap(videoPath);
 
-    if (!cap.isOpened()){
+    if (!cap.isOpened()){ 
         perror("Error: Could not open video file.");
         return 0;
     }
